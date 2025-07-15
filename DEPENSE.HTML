@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Expense Summary</title>
+  <style>
+    /* Image de fond avec overlay */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image:url(im.jpg);
+      background-size: ;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #34495e;
+      margin-top: 25px;
+    }
+
+    input[type="number"], input[type="password"] {
+      padding: 5px;
+      width: 120px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      color: #2c3e50;
+    }
+
+    .total {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #c0392b;
+      margin-top: 20px;
+    }
+
+    .solde {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #27ae60;
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    ul {
+      margin-top: 10px;
+      padding-left: 20px;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>💼 Expense Summary</h1>
+
+    <!-- Zone mot de passe -->
+    <h2>🔒 Unlock Income & Remaining Balance</h2>
+    <p>Enter password to reveal income and remaining balance:</p>
+    <input type="password" id="password-input" placeholder="Enter password" />
+    <button onclick="unlockSensitive()">Unlock</button>
+    <p id="message" class="error hidden"></p>
+
+    <!-- Bloc revenu caché -->
+    <div id="income-block" class="hidden" style="margin-top: 15px;">
+      <p><strong>Monthly Income:</strong> <input type="number" id="income" value="4072" /></p>
+      <p><strong>Savings:</strong> <input type="number" id="savings" value="500" /></p>
+    </div>
+
+    <!-- Dépenses mensuelles -->
+    <h2>📅 Monthly Expenses</h2>
+    <table id="expense-table">
+      <tr><th>Category</th><th>Amount ($)</th></tr>
+      <tr><td>Medication</td><td><input type="number" class="expense" value="80.23" /></td></tr>
+      <tr><td>Products</td><td><input type="number" class="expense" value="85.58" /></td></tr>
+      <tr><td>Allowance</td><td><input type="number" class="expense" value="0" /></td></tr>
+      <tr><td>Wifi</td><td><input type="number" class="expense" value="44.57" /></td></tr>
+      <tr><td>Rent</td><td><input type="number" class="expense" value="1447" /></td></tr>
+      <tr><td>Electricity</td><td><input type="number" class="expense" value="200" /></td></tr>
+      <tr><td>Car Insurance</td><td><input type="number" class="expense" value="342" /></td></tr>
+      <tr><td>Home Insurance</td><td><input type="number" class="expense" value="36" /></td></tr>
+      <tr><td>Car Payment</td><td><input type="number" class="expense" value="588" /></td></tr>
+      <tr><td>Homme PARC</td><td><input type="number" class="expense" value="53.49" /></td></tr>
+      <tr><td>Phone</td><td><input type="number" class="expense" value="212" /></td></tr>
+      <tr><td>Internet</td><td><input type="number" class="expense" value="103" /></td></tr>
+      <tr><td>Netflix</td><td><input type="number" class="expense" value="24" /></td></tr>
+      <tr><td>Food</td><td><input type="number" class="expense" value="320" /></td></tr>
+    </table>
+
+    <!-- Total visible toujours -->
+    <p class="total">💸 Total Monthly Expenses: <span id="total-expenses">0</span> $</p>
+
+    <!-- Reste caché au début -->
+    <p id="remaining-block" class="solde hidden">💰 Remaining After Expenses: <span id="remaining">0</span> $</p>
+
+    <!-- Dépenses à venir -->
+    <h2>📦 Upcoming Expenses</h2>
+    <ul>
+      <li>Phone</li>
+      <li>Shopping</li>
+      <li>Computer</li>
+      <li>Plane Ticket</li>
+      <li>Monitor</li>
+    </ul>
+  </div>
+
+  <script>
+    const correctPassword = "#Maimouna#9"; // Change password here
+
+    function unlockSensitive() {
+      const input = document.getElementById('password-input').value;
+      const message = document.getElementById('message');
+      if (input === correctPassword) {
+        document.getElementById('income-block').classList.remove('hidden');
+        document.getElementById('remaining-block').classList.remove('hidden');
+        message.textContent = "Access granted.";
+        message.className = "success";
+        message.classList.remove("hidden");
+        updateTotals();
+      } else {
+        message.textContent = "Incorrect password!";
+        message.className = "error";
+        message.classList.remove("hidden");
+      }
+    }
+
+    function updateTotals() {
+      const expenses = document.querySelectorAll('.expense');
+      let total = 0;
+      expenses.forEach(input => {
+        const val = parseFloat(input.value) || 0;
+        total += val;
+      });
+      document.getElementById('total-expenses').textContent = total.toFixed(2);
+
+      const incomeInput = document.getElementById('income');
+      const income = incomeInput ? parseFloat(incomeInput.value) || 0 : 0;
+
+      const remaining = income - total;
+      document.getElementById('remaining').textContent = remaining.toFixed(2);
+    }
+
+    document.querySelectorAll('.expense').forEach(input => {
+      input.addEventListener('input', updateTotals);
+    });
+
+    if (document.getElementById('income')) {
+      document.getElementById('income').addEventListener('input', updateTotals);
+    }
+
+    updateTotals();
+  </script>
+
+</body>
+</html>
